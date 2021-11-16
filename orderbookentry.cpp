@@ -1,4 +1,4 @@
-#include "orderbookentry.h"
+#include "OrderBookEntry.h"
 #include <string>
        // Constructor
 OrderBookEntry::OrderBookEntry(double long _price,
@@ -13,3 +13,18 @@ OrderBookEntry::OrderBookEntry(double long _price,
     orderType(_orderType)
 {
 };
+
+
+OrderBookType OrderBookEntry::stringToOrderBookType(const std::string& s)
+{
+    if (s == "ask")
+    {
+        return OrderBookType::ask;
+    }
+    if (s == "bid")
+    {
+        return OrderBookType::bid;
+    }
+    return OrderBookType::unknown;
+}
+

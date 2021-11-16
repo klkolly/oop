@@ -1,7 +1,12 @@
 
 #pragma once
-#include<vector>
-#include "orderbookentry.h"
+#include <vector>
+#include <string>
+#include <iostream>
+#include "OrderBookEntry.h"
+#include "OrderBookEntry.h"
+#include "CSVReader.h"
+#include "OrderBook.h"
 
 
 class MerkelMain{
@@ -12,7 +17,7 @@ class MerkelMain{
 
 
     private:
-        void loadOrderBook();
+        OrderBook orderBook{"20200317.csv"};
         void print(std:: string word);
         void printMenu();
         int getUserOption();
@@ -25,6 +30,7 @@ class MerkelMain{
         void processUserOption(int userOption);
         
         std::vector<OrderBookEntry> orders;
+        std::string currentTime;
 
         // private:
         //     void loadOrderBook();

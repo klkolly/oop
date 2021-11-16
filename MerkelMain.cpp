@@ -1,13 +1,12 @@
 
 #include "MerkelMain.h"
-#include <vector>
-#include "orderbookentry.h"
-#include <string>
-#include <iostream>
+
 
 void MerkelMain::init(){
-    loadOrderBook();
+    // loadOrderBook();
     int input;
+    currentTime = orderBook.getEarliestTime();
+
     while(true)
     {
         printMenu();
@@ -16,12 +15,10 @@ void MerkelMain::init(){
     }
 }
 
-void MerkelMain::loadOrderBook(){
-    OrderBookEntry order1(0.02186299, 252.76, "2020/03/17 17:01:24.884492", "ETH/USDT", OrderBookType::bid);
-    OrderBookEntry order2(0.02126299, 255.76, "2020/03/17 17:01:24.884492", "ETH/USDT", OrderBookType::bid);
-    orders.push_back(order1);
-    orders.push_back(order2);
-}
+// void MerkelMain::loadOrderBook(){
+//     orders = CSVReader::readCSV("20200317.csv");
+//     std::cout << "read " << orders.size() << " orders" << std::endl;
+// }
 
 
 void MerkelMain::print(std:: string word){
@@ -35,6 +32,7 @@ void MerkelMain::printMenu(){
     std::cout << "4: Place a bid" << std::endl;
     std::cout << "5: Print wallet" << std::endl;
     std::cout << "6: Continue" << std::endl;
+    std::cout << "==================" << std::endl;
 }
 
 int MerkelMain::getUserOption(){
@@ -51,9 +49,20 @@ void MerkelMain::printHelp()
     std::cout << "and offers. " << std::endl;
 }
 
-void MerkelMain::printMarketStats(){
-    print("MarketStats");
+void MerkelMain::printMarketStats()
+{
+    
+    for (const std::string& p : orderBook.getKnownProducts())
+    {
+        std::cout << "Product: " << p << std::endl;
+        std::vector<OrderBookEntry> entries = orderBook.getOrders(OrderBookType::ask, p, currentTime);
+        std::cout << "Asks seen: " << entries.size() << std::endl;
+        std::cout << "Max ask: " << OrderBook::getHighPrice(entries) << std::endl;
+        std::cout << "Min ask: " << OrderBook::getLowPrice(entries) << std::endl;
+    }
+
 }
+
 
 void MerkelMain::enterAsk(){
     print("enterAsk");
@@ -68,30 +77,33 @@ void MerkelMain::printWallet(){
 }
 
 void MerkelMain::gotoNextTimeframe(){
-    print("gotoNextTimeframe");
+    std::cout << "Going to next time frame. " << std::endl;
+    
+    currentTime = orderBook.getNextTime(currentTime);
 }
 
 void MerkelMain::processUserOption(int userOption){
-    if(userOption == 0){
-        std::cout << "Invalid choice. Choose 1-6" << std::endl;
-    }
+
     if(userOption == 1){
         printHelp();
     }
-    if(userOption == 2){
+    else if(userOption == 2){
         printMarketStats();
     }
-    if(userOption == 3){
+    else if(userOption == 3){
         enterAsk();
     }
-    if(userOption == 4){
+    else if(userOption == 4){
         enterBid();
     }
-    if(userOption == 5){
+    else if(userOption == 5){
         printWallet();
     }
-    if(userOption == 6){
+    else if(userOption == 6){
         gotoNextTimeframe();
+    }
+    else{
+        std::cout << "Invalid choice. Choose 1-6" << std::endl;
     }
 }
 
