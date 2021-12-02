@@ -4,6 +4,7 @@
 
 
 enum class OrderBookType {bid, ask, unknown};
+/** object for book info,include price amount time product and order type*/
 class OrderBookEntry
 {
     public: 

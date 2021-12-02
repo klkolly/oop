@@ -3,6 +3,8 @@
 #include "CSVReader.h"
 #include <string>
 #include <vector>
+
+/**   order for orderbookentry   */
 class OrderBook
 {
     public:
@@ -20,6 +22,8 @@ class OrderBook
         static double getHighPrice(std::vector<OrderBookEntry>& orders);
         /** return the price of the lowest bid in the sent set */
         static double getLowPrice(std::vector<OrderBookEntry>& orders);
+        void insertOrder(OrderBookEntry& order);
+
     private:
         std::vector<OrderBookEntry> orders;
 };
