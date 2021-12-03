@@ -7,6 +7,7 @@
 #include "OrderBookEntry.h"
 #include "CSVReader.h"
 #include "OrderBook.h"
+#include <algorithm>
 
 
 class MerkelMain{
@@ -32,15 +33,5 @@ class MerkelMain{
         std::vector<OrderBookEntry> orders;
         std::string currentTime;
 
-        // private:
-        //     void loadOrderBook();
-        //     void printMenu();
-        //     void printHelp();
-        //     void printMarketStats();
-        //     void enterOffer();
-        //     void enterBid();
-        //     void printWallet();
-        //     void gotoNextTimeframe();
-        //     int getUserOption();
-        //     void processUserOption(int userOption);
+
 };

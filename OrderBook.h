@@ -23,6 +23,7 @@ class OrderBook
         /** return the price of the lowest bid in the sent set */
         static double getLowPrice(std::vector<OrderBookEntry>& orders);
         void insertOrder(OrderBookEntry& order);
+        std::vector<OrderBookEntry> matchAsksToBids(std::string product, std::string timestamp);
 
     private:
         std::vector<OrderBookEntry> orders;
