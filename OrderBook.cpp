@@ -118,51 +118,91 @@ void OrderBook::insertOrder(OrderBookEntry& order)
 
 
 std::vector<OrderBookEntry> OrderBook::matchAsksToBids(std::string product, std::string timestamp){
-// asks = orderbook.asks in this timeframe
-// bids = orderbook.bids in this timeframe
-// sales = []
-// sort asks lowest first
-// sort bids highest first
-// for ask in asks:
-{
-    // for bid in bids:
+    // asks = orderbook.asks in this timeframe
+    std::vector<OrderBookEntry> asks = getOrders(OrderBookType::ask, product,timestamp);
+    // bids = orderbook.bids in this timeframe
+    std::vector<OrderBookEntry> bids = getOrders(OrderBookType::bid, product,timestamp);
+    // sales = []
+    std::vector<OrderBookEntry> sales;
+    // sort asks lowest first
+    std::sort(asks.begin(), asks.end(), OrderBookEntry::compareByPriceAsc);
+    // sort bids highest first
+    std::sort(bids.begin(), bids.end(), OrderBookEntry::compareByPriceDesc);
+    // for ask in asks:
+      // for ask in asks:
+    std::cout << "max ask " << asks[asks.size()-1].price << std::endl;
+    std::cout << "min ask " << asks[0].price << std::endl;
+    std::cout << "max bid " << bids[0].price << std::endl;
+    std::cout << "min bid " << bids[bids.size()-1].price << std::endl;
+    for( OrderBookEntry& ask : asks)
     {
-        // if bid.price >= ask.price # we have a match
+        // for bid in bids:
+        for(OrderBookEntry& bid : bids)
+        
         {
-            // sale = new orderbookentry()
-            // sale.price = ask.price
-            // if bid.amount == ask.amount: # bid completely clears ask
+            // if bid.price >= ask.price # we have a match
+            if(bid.price >= ask.price)
             {
-                // sale.amount = ask.amount
-                // sales.append(sale)
-                // bid.amount = 0 # make sure the bid is not processed again
-                // # can do no more with this ask
-                // # go onto the next ask
-                // break
-            }
-            // if bid.amount > ask.amount: # ask is completely gone slice the bid
-            {
-                // sale.amount = ask.amount
-                // sales.append(sale)
-                // # we adjust the bid in place
-                // # so it can be used to process the next ask
-                // bid.amount = bid.amount - ask.amount
-                // # ask is completely gone, so go to next ask
-                // break
-            }
-            // if bid.amount < ask.amount # bid is completely gone, slice the ask
-            {
-                // sale.amount = bid.amount
-                // sales.append(sale)
-                // # update the ask
-                // # and allow further bids to process the remaining amount
-                // ask.amount = ask.amount - bid.amount
-                // bid.amount = 0 # make sure the bid is not processed again
-                // # some ask remains so go to the next bid
-                // continue
+                // sale = new orderbookentry()
+                OrderBookEntry sale {0,
+                                    0,
+                                    timestamp,
+                                    product,
+                                    OrderBookType::sale
+                };
+
+                // sale.price = ask.price
+                sale.price = ask.price;
+                // if bid.amount == ask.amount: # bid completely clears ask
+                if(bid.amount == ask.amount)
+                {
+                    // sale.amount = ask.amount
+                    sale.amount = ask.amount;
+                    // sales.append(sale)
+                    sales.push_back(sale);
+                    // bid.amount = 0 # make sure the bid is not processed again
+                    bid.amount = 0;
+                    // # can do no more with this ask
+                    // # go onto the next ask
+                    // break
+                    break;
+                }
+                // if bid.amount > ask.amount: # ask is completely gone slice the bid
+                if (bid.amount > ask.amount)
+                {
+                    // sale.amount = ask.amount
+                    sale.amount = ask.amount;
+                    // sales.append(sale)
+                    sales.push_back(sale);
+                    // # we adjust the bid in place
+
+                    // # so it can be used to process the next ask
+                    // bid.amount = bid.amount - ask.amount
+                    bid.amount = bid.amount - ask.amount;
+                    // # ask is completely gone, so go to next ask
+                    // break
+                    break;
+                }
+                // if bid.amount < ask.amount # bid is completely gone, slice the ask
+                if (bid.amount < ask.amount)
+                {
+                    
+                    // sale.amount = bid.amount
+                    sale.amount = bid.amount;
+                    // sales.append(sale)
+                    sales.push_back(sale);
+                    // # update the ask
+                    // # and allow further bids to process the remaining amount
+                    // ask.amount = ask.amount - bid.amount
+                    ask.amount = ask.amount - bid.amount;
+                    // bid.amount = 0 # make sure the bid is not processed again
+                    bid.amount = 0;
+                    // # some ask remains so go to the next bid
+                    // continue
+                    continue;
+                }
             }
         }
     }
-}
-// return sales
+    return sales;
 }
